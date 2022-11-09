@@ -8,11 +8,13 @@ const colors = [
     primaryColor: 'hsl(200, 15%, 8%)',
     secondaryColor: '#fff',
     backgroundColor: 'hsl(0, 0%, 98%)',
+    hoverColor: '#f2f2f2',
   },
   {
     primaryColor: '#fff',
     secondaryColor: 'hsl(209, 23%, 22%)',
     backgroundColor: 'hsl(207, 26%, 17%)',
+    hoverColor: '#627884',
   },
 ];
 
@@ -32,8 +34,9 @@ const backBtn = document.querySelector('.btn--back');
 const item = document.querySelector('.item');
 const countryParent = document.querySelector('.countries');
 
-// *** Scroll top Variables :
-const scrollTop = document.querySelector('.go-up');
+// *** Load More btn Variable :
+const loadBtn = document.querySelector('.btn--load');
+let countryIndex = 24;
 
 // # - Dark Mode :
 modeBtn.addEventListener('click', function () {
@@ -66,7 +69,7 @@ searchInput.addEventListener('input', function (e) {
         `<div class="search--option">${name}</div>`
       )
     );
-  if (!value.length) displayCountry();
+  if (!value.length) displayCountry(showCountries);
 });
 
 searchOptions.addEventListener('click', function (e) {
@@ -86,7 +89,9 @@ optionsParent.addEventListener('click', function (e) {
   const region = e.target.dataset.value;
   selectText.textContent = region;
   this.classList.add('hidden');
-  searchRegion(region);
+  loadBtn.classList.add('hidden');
+  if (region == 'All Regions') displayCountry(showCountries);
+  else searchRegion(region);
 });
 
 // # - Switch View :
@@ -107,22 +112,13 @@ backBtn.addEventListener('click', () => {
   document.querySelector('section').classList.remove('hidden');
 });
 
+// # - Load More Countries :
+loadBtn.addEventListener('click', () => displayCountry(loadMore));
+
 // # - Remove Focus on filter :
 document.querySelector('.toolbar').addEventListener('click', (e) => {
   if (e.target.className.includes('toolbar'))
     optionsParent.classList.add('hidden');
-});
-
-// # - Scroll to Top :
-scrollTop.addEventListener(
-  'click',
-  () => (document.documentElement.scrollTop = 0)
-);
-
-document.addEventListener('scroll', () => {
-  if (document.documentElement.getBoundingClientRect().top < 0)
-    scrollTop.classList.remove('hidden');
-  else scrollTop.classList.add('hidden');
 });
 
 // ##################################
@@ -139,9 +135,9 @@ async function getResult(url, func) {
 }
 
 // Get All Countries :
-const displayCountry = () => {
+const displayCountry = (method) => {
   const url = 'https://restcountries.com/v3.1/all';
-  getResult(url, showCountries);
+  getResult(url, method);
 };
 
 // Search by Country Name :
@@ -193,12 +189,12 @@ const showCountries = (data, order = true) => {
     countries.forEach((countryName) =>
       countriesNames.push(countryName.name.toLowerCase())
     );
-    const order = 20;
-    for (let i = 0; i < order; i++) showCountryCard(countries[i]);
+    for (let i = 0; i < countryIndex; i++) showCountryCard(countries[i]);
+    loadBtn.classList.remove('hidden');
   } else countries.forEach((country) => showCountryCard(country));
 };
 
-displayCountry();
+displayCountry(showCountries);
 
 const getSearchResult = (data) => {
   const country = {
@@ -209,6 +205,7 @@ const getSearchResult = (data) => {
     flag: data[0].flags.png,
   };
   countryParent.innerHTML = '';
+  loadBtn.classList.add('hidden');
   showCountryCard(country);
 };
 
@@ -270,4 +267,25 @@ const showCountryInfo = (data) => {
 const showBorders = (data) => {
   let borderHTML = `<span class="border">${data[0].name.common}</span>`;
   item.querySelector('.borders').insertAdjacentHTML('beforeend', borderHTML);
+};
+
+const loadMore = (data) => {
+  const countries = [];
+  data.forEach((country) =>
+    countries.push({
+      name: country.name.common,
+      population: country.population,
+      region: country.region,
+      capital: country.capital,
+      flag: country.flags.png,
+    })
+  );
+
+  const maxIndex =
+    countryIndex + 24 <= countriesNames.length
+      ? countryIndex + 24
+      : countriesNames.length;
+  for (let i = countryIndex; i <= maxIndex; i++) showCountryCard(countries[i]);
+  countryIndex = max;
+  if (countryIndex === countriesNames.length) loadBtn.classList.add('hidden');
 };
