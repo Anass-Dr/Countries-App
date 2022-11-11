@@ -471,9 +471,7 @@ section .load {
     width: auto;
   }
   section .countries {
-    grid-template-columns: repeat(auto-fill, 275px);
     justify-content: start;
-    gap: 6rem;
   }
   .item-body {
     gap: 5.5rem;
@@ -500,5 +498,13 @@ section .load {
   }
   .go-up {
     opacity: 0;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  section .countries {
+    grid-template-columns: repeat(auto-fill, 275px);
+    justify-content: start;
+    gap: 6rem;
   }
 }

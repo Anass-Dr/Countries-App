@@ -285,7 +285,7 @@ const loadMore = (data) => {
     countryIndex + 24 <= countriesNames.length
       ? countryIndex + 24
       : countriesNames.length;
-  for (let i = countryIndex; i <= maxIndex; i++) showCountryCard(countries[i]);
-  countryIndex = max;
+  for (let i = countryIndex; i < maxIndex; i++) showCountryCard(countries[i]);
+  countryIndex = maxIndex;
   if (countryIndex === countriesNames.length) loadBtn.classList.add('hidden');
 };
