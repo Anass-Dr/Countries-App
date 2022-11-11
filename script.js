@@ -50,7 +50,10 @@ modeBtn.addEventListener('click', function () {
 
 // # - Search Bar :
 searchInput.addEventListener('keypress', function (e) {
-  if (e.key === 'Enter') searchName(this.value, getSearchResult);
+  if (e.key === 'Enter') {
+    searchName(this.value, getSearchResult);
+    selectText.textContent = 'Filter by Region';
+  }
 });
 
 searchInput.addEventListener('input', function (e) {
@@ -69,7 +72,10 @@ searchInput.addEventListener('input', function (e) {
         `<div class="search--option">${name}</div>`
       )
     );
-  if (!value.length) displayCountry(showCountries);
+  if (!value.length) {
+    displayCountry(showCountries);
+    selectText.textContent = 'Filter by Region';
+  }
 });
 
 searchOptions.addEventListener('click', function (e) {
@@ -77,6 +83,7 @@ searchOptions.addEventListener('click', function (e) {
   searchInput.value = value;
   this.innerHTML = '';
   searchName(value, getSearchResult);
+  selectText.textContent = 'Filter by Region';
 });
 
 // # - Filter Bar :
